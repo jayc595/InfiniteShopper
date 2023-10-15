@@ -10,6 +10,7 @@ class Product(models.Model):
     product_sku = models.CharField(max_length=25, unique=True)
     product_description = models.CharField(max_length=500, blank=True)
     product_price = models.IntegerField()
+    product_special_price = models.IntegerField(default=0)
     product_images = models.ImageField(upload_to='images/products', blank=True)
     product_stock = models.IntegerField()
     is_available = models.BooleanField(default=True)
