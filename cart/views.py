@@ -44,9 +44,9 @@ def remove_item_from_cart(request, product_id):
     cart_item = CartItem.objects.get(product=product, cart=cart)
     if cart_item.qty > 1:
         cart_item.qty -= 1
+        cart_item.save()
     else:
         cart_item.delete()
-    cart_item.save()
     return redirect('cart')
 
 
@@ -55,11 +55,12 @@ def delete_item_from_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart_item = CartItem.objects.get(product=product, cart=cart)
     cart_item.delete()
-    cart_item.save()
     return redirect('cart')
 
 
 def cart(request, total=0, qty=0, cart_items=None):
+    vat = 0
+    grand_total = 0
     try:
         cart = Cart.objects.get(quote_id=_get_quote_id(request))
         cart_items = CartItem.objects.filter(cart=cart, is_active=True)
