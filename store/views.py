@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from store.models import Product
 from category.models import Category
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponse
+from django.db.models import Q
 
 
 # Create your views here.
@@ -40,3 +42,19 @@ def product_detail(request, category_slug, product_slug):
         'product': product,
     }
     return render(request, 'store/product_detail.html', context)
+
+
+def search(request):
+    if 'k' in request.GET:
+        search_criteria = request.GET['k']
+        if search_criteria:
+            products = Product.objects.order_by('-created_at').filter(Q(product_description__icontains=search_criteria)
+                                                                      | Q(product_name__icontains=search_criteria))
+            product_count = products.count()
+
+    context = {
+        'products': products,
+        'product_count': product_count,
+        'page_name': "Search",
+    }
+    return render(request, 'store/store.html', context)
