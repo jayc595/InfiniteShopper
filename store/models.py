@@ -23,10 +23,50 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     def get_product_url(self):
         return reverse('product_detail', args=[self.product_category.category_slug, self.product_slug])
 
-
     def __str__(self):
         return self.product_name
+
+
+type_options = (
+    ('dropdown', 'dropdown'),
+)
+
+
+class ProductOptionTitle(models.Model):
+    option_title = models.CharField(max_length=100)
+    option_code = models.SlugField(max_length=200, unique=True)
+    option_title_frontend = models.CharField(max_length=100)
+    option_type = models.CharField(max_length=100, choices=type_options)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "product option title"
+        verbose_name_plural = "product option title"
+
+    def __str__(self):
+        return self.option_title
+
+
+class ProductOptions(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_option_titles = models.ForeignKey(ProductOptionTitle, on_delete=models.CASCADE)
+    product_option_value = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "product option"
+        verbose_name_plural = "product options"
+
+    def __unicode__(self):
+        return self.product
+
+
+
+
