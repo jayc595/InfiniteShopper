@@ -35,14 +35,14 @@ def store(request, category_slug=None):
 def product_detail(request, category_slug, product_slug):
     try:
         product = Product.objects.get(product_category__category_slug=category_slug, product_slug=product_slug)
-        product_option_titles = ProductOptionTitle.objects.filter(is_active=True)
+        product_option_titles = ProductOptionTitle.objects.filter(is_active=True).order_by('sort_order')
 
         # Create a list of dictionaries to store titles with their options
         grouped_options = []
 
         # Loop through the titles and get their associated options
         for title in product_option_titles:
-            options = ProductOptions.objects.filter(product=product, product_option_titles=title, is_active=True)
+            options = ProductOptions.objects.filter(product=product, product_option_titles=title, is_active=True).order_by('sort_order')
             if options:
                 title_with_options = {
                     'title': title,

@@ -32,20 +32,32 @@
 
 				<hr>
 					{% for title_with_options in grouped_options %}
-						{% if title_with_options.title.option_type == 'radio inline' %}
 							<div class="row">
 								<div class="item-option-select">
 									<h6>{{ title_with_options.title.option_title_frontend }}</h6>
-									<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-										{% for option in title_with_options.options %}
-										  <label class="btn btn-light">
-											<input type="radio" name="radio_{{ option.product_option_value }}"> {{ option.product_option_value }}
-										  </label>
-										{% endfor %}
-									</div>
+									{% if title_with_options.title.option_type == 'radio inline' %}
+										<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+											{% for option in title_with_options.options %}
+												{% if option.is_default %}
+													<label class="btn btn-light active">
+														<input type="radio" name="radio_{{ option.product_option_value }}"> {{ option.product_option_value }}
+													  </label>
+												{% else %}
+													<label class="btn btn-light">
+														<input type="radio" name="radio_{{ option.product_option_value }}"> {{ option.product_option_value }}
+													  </label>
+												{% endif %}
+											{% endfor %}
+										</div>
+									{% elif title_with_options.title.option_type == 'dropdown' %}
+										<select name="{{ title_with_options.title.option_title }}" class="form-control">
+											{% for option in title_with_options.options %}
+												<option value="{{ option.product_option_value }}">{{ option.product_option_value }}</option>
+											{% endfor %}
+										</select>
+									{% endif %}
 								</div>
 							</div> <!-- row.// -->
-						{% endif %}
 					{% endfor %}
 					<hr>
 					{% if product.product_stock <= 0 or product.is_available == False %}

@@ -42,6 +42,8 @@ class ProductOptionTitle(models.Model):
     option_title_frontend = models.CharField(max_length=100)
     option_type = models.CharField(max_length=100, choices=type_options)
     is_active = models.BooleanField(default=True)
+    is_required = models.BooleanField(default=False)
+    sort_order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -58,6 +60,8 @@ class ProductOptions(models.Model):
     product_option_titles = models.ForeignKey(ProductOptionTitle, on_delete=models.CASCADE)
     product_option_value = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
+    sort_order = models.IntegerField(default=0)
+    is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
