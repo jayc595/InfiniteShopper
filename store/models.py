@@ -32,6 +32,7 @@ class Product(models.Model):
 
 type_options = (
     ('dropdown', 'dropdown'),
+    ('radio inline', 'radio inline'),
 )
 
 

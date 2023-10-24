@@ -31,44 +31,22 @@
 
 
 				<hr>
-					<div class="row">
-						<div class="item-option-select">
-							<h6>Choose Color</h6>
-							<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-							  <label class="btn btn-light">
-								<input type="radio" name="radio_color"> Silver
-							  </label>
-							  <label class="btn btn-light">
-								<input type="radio" name="radio_color" > Gray
-							  </label>
-							  <label class="btn btn-light active">
-								<input type="radio" name="radio_color checked"> Gold
-							  </label>
-							  <label class="btn btn-light">
-								<input type="radio" name="radio_color"> Black
-							  </label>
-							</div>
-						</div>
-					</div> <!-- row.// -->
-					<div class="row">
-						<div class="item-option-select">
-							<h6>Select Size</h6>
-							<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-							  <label class="btn btn-light">
-								<input type="radio" name="radio_color"> S
-							  </label>
-							  <label class="btn btn-light active">
-								<input type="radio" name="radio_color" checked> M
-							  </label>
-							  <label class="btn btn-light">
-								<input type="radio" name="radio_color"> L
-							  </label>
-							  <label class="btn btn-light">
-								<input type="radio" name="radio_color"> XL
-							  </label>
-							</div>
-						</div>
-					</div> <!-- row.// -->
+					{% for title_with_options in grouped_options %}
+						{% if title_with_options.title.option_type == 'radio inline' %}
+							<div class="row">
+								<div class="item-option-select">
+									<h6>{{ title_with_options.title.option_title_frontend }}</h6>
+									<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+										{% for option in title_with_options.options %}
+										  <label class="btn btn-light">
+											<input type="radio" name="radio_{{ option.product_option_value }}"> {{ option.product_option_value }}
+										  </label>
+										{% endfor %}
+									</div>
+								</div>
+							</div> <!-- row.// -->
+						{% endif %}
+					{% endfor %}
 					<hr>
 					{% if product.product_stock <= 0 or product.is_available == False %}
 					<h5 class="text-danger">Out of Stock</h5>

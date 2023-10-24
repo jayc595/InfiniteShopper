@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from store.models import Product
+from store.models import Product, ProductOptions, ProductOptionTitle
 from category.models import Category
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
 from django.db.models import Q
+from collections import defaultdict
 
 
 # Create your views here.
@@ -24,7 +25,6 @@ def store(request, category_slug=None):
         paginator_products = paginator.get_page(page)
         product_count = products.count()
 
-
     context = {
         'products': paginator_products,
         'product_count': product_count,
@@ -35,11 +35,28 @@ def store(request, category_slug=None):
 def product_detail(request, category_slug, product_slug):
     try:
         product = Product.objects.get(product_category__category_slug=category_slug, product_slug=product_slug)
+        product_option_titles = ProductOptionTitle.objects.filter(is_active=True)
+
+        # Create a list of dictionaries to store titles with their options
+        grouped_options = []
+
+        # Loop through the titles and get their associated options
+        for title in product_option_titles:
+            options = ProductOptions.objects.filter(product=product, product_option_titles=title, is_active=True)
+            if options:
+                title_with_options = {
+                    'title': title,
+                    'options': options
+                }
+                grouped_options.append(title_with_options)
+
     except Exception as e:
         raise e
 
     context = {
         'product': product,
+        'grouped_options': grouped_options,
+        'product_option_titles': product_option_titles,
     }
     return render(request, 'store/product_detail.html', context)
 
