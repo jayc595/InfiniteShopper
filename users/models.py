@@ -38,6 +38,7 @@ class AccountManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    objects = AccountManager()
     firstname = models.CharField(max_length=25)
     lastname = models.CharField(max_length=25)
     username = models.CharField(max_length=50, unique=True)
