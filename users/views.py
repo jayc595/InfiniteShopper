@@ -4,6 +4,14 @@ from .models import User
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 
+# customer verification import
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMessage
+
 
 # Create your views here.
 def register(request):
@@ -21,7 +29,20 @@ def register(request):
                                             password=password)
             user.phone = phone
             user.save()
-            messages.success(request, "Account successfully created")
+
+            # CUSTOMER ACTIVATION
+            site = get_current_site(request)
+            email_subject = "Please activate your account"
+            message = render_to_string("Hi, please verify your account")
+            messages.success(request, "Account successfully created", {
+                'user': user,
+                'domain': site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+            email_to = email
+            send_email = EmailMessage(email_subject, message, to=[email_to])
+            send_email.send()
             return redirect('register')
     else:
         form = RegisterForm()
