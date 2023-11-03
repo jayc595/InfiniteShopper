@@ -60,8 +60,8 @@ def login(request):
 
         if user is not None:
             auth.login(request, user)
-            # messages.success(request, "You have successfully logged in.")
-            return redirect('home')
+            messages.success(request, "You have successfully logged in.")
+            return redirect('account')
         else:
             messages.error(request, "Email or Password incorrect.")
             return redirect('login')
@@ -73,3 +73,7 @@ def logout(request):
     auth.logout(request)
     messages.success(request, "You have successfully logged out.")
     return redirect('login')
+
+@login_required(login_url='login')
+def myAccount(request):
+    return render(request, 'accounts/account.html')
