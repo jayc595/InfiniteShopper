@@ -61,6 +61,16 @@ def delete_item_from_cart(request, product_id):
 
 
 def cart(request, total=0, qty=0, cart_items=None):
+    context = _cart_items_context(request, total, qty, cart_items)
+    return render(request, 'store/cart.html', context)
+
+
+def checkout(request, total=0, qty=0, cart_items=None):
+    context = _cart_items_context(request, total, qty, cart_items)
+    return render(request, 'store/checkout.html', context)
+
+
+def _cart_items_context(request, total=0, qty=0, cart_items=None):
     vat = 0
     grand_total = 0
     try:
@@ -81,4 +91,4 @@ def cart(request, total=0, qty=0, cart_items=None):
         'vat': vat,
         'grand_total': grand_total,
     }
-    return render(request, 'store/cart.html', context)
+    return context
