@@ -3,6 +3,7 @@ from store.models import Product
 from .models import Cart, CartItem
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -10,12 +11,11 @@ from django.core.exceptions import ObjectDoesNotExist
 def _get_quote_id(request):
     quote = request.session.session_key
     if not quote:
-        quote = request.session.create
+        quote = request.session.create()
     return quote
 
 
 def add_to_cart(request, product_id):
-
     product = Product.objects.get(id=product_id)
     try:
         cart = Cart.objects.get(quote_id=_get_quote_id(request))
@@ -23,6 +23,7 @@ def add_to_cart(request, product_id):
         cart = Cart.objects.create(
             quote_id=_get_quote_id(request)
         )
+        cart.save()
     cart.save()
 
     try:
@@ -65,6 +66,7 @@ def cart(request, total=0, qty=0, cart_items=None):
     return render(request, 'store/cart.html', context)
 
 
+@login_required(login_url='login')
 def checkout(request, total=0, qty=0, cart_items=None):
     context = _cart_items_context(request, total, qty, cart_items)
     return render(request, 'store/checkout.html', context)
@@ -81,8 +83,10 @@ def _cart_items_context(request, total=0, qty=0, cart_items=None):
             qty += item.qty
         vat = (20 * total) / 100
         grand_total = total + vat
-    except ObjectDoesNotExist:
-        pass
+    except Exception as e:
+        print(e)
+            # ObjectDoesNotExist):
+        # pass
 
     context = {
         'cart_items': cart_items,

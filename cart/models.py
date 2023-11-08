@@ -21,5 +21,5 @@ class CartItem(models.Model):
     def sub_total(self):
         return self.product.product_price * self.qty
 
-    def __str__(self):
+    def __unicode__(self):
         return self.product
