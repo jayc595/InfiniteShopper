@@ -76,8 +76,11 @@ def _cart_items_context(request, total=0, qty=0, cart_items=None):
     vat = 0
     grand_total = 0
     try:
-        cart = Cart.objects.get(quote_id=_get_quote_id(request))
-        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+        if request.user.is_authenticated:
+            cart_items = CartItem.objects.filter(user=request.user, is_active=True)
+        else:
+            cart = Cart.objects.get(quote_id=_get_quote_id(request))
+            cart_items = CartItem.objects.filter(cart=cart, is_active=True)
         for item in cart_items:
             total += (item.product.product_price * item.qty)
             qty += item.qty

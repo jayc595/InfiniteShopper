@@ -3,6 +3,8 @@ from .form import RegisterForm
 from .models import User
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
+from cart.models import Cart, CartItem
+from cart.views import _get_quote_id
 
 # customer verification import
 from django.contrib.sites.shortcuts import get_current_site
@@ -59,6 +61,18 @@ def login(request):
         user = auth.authenticate(email=email, password=password)
 
         if user is not None:
+            try:
+                cart = Cart.objects.get(quote_id=_get_quote_id(request))
+                is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+                if is_cart_item_exists:
+                    cart_item = CartItem.objects.filter(cart=cart)
+
+                    for item in cart_item:
+                        item.user = user
+                        item.save()
+
+            except:
+                pass
             auth.login(request, user)
             messages.success(request, "You have successfully logged in.")
             return redirect('account')
